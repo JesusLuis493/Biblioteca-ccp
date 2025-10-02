@@ -1,38 +1,33 @@
-name: C/C++ CI
+name: C++ Build & Test
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, dev ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up build dependencies
-      run: sudo apt-get update && sudo apt-get install -y build-essential
+    - name: Set up C++ compiler
+      run: sudo apt-get install -y g++
 
-    - name: Build with Makefile (if exists)
+    - name: Build project
       run: |
-        if [ -f Makefile ]; then
-          make
-        else
-          echo "No Makefile found. Skipping make."
-        fi
+        mkdir -p build
+        g++ -Wall -Wextra -std=c++17 src/*.cpp -o build/biblioteca
 
-    - name: Compile main.cpp directly (if no Makefile)
-      if: "!exists('Makefile') && exists('main.cpp')"
-      run: g++ -o main main.cpp
-
-    - name: Run tests
+    - name: Run tests (if available)
       run: |
-        if [ -f main ]; then
-          ./main
+        if [ -d "tests" ]; then
+          for testfile in tests/*.cpp; do
+            g++ -Wall -Wextra -std=c++17 "$testfile" -o build/test_exec && ./build/test_exec
+          done
         else
-          echo "No executable found to run tests."
+          echo "No tests directory found, skipping tests."
         fi
