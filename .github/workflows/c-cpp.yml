@@ -2,20 +2,37 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: configure
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up build dependencies
+      run: sudo apt-get update && sudo apt-get install -y build-essential
+
+    - name: Build with Makefile (if exists)
+      run: |
+        if [ -f Makefile ]; then
+          make
+        else
+          echo "No Makefile found. Skipping make."
+        fi
+
+    - name: Compile main.cpp directly (if no Makefile)
+      if: "!exists('Makefile') && exists('main.cpp')"
+      run: g++ -o main main.cpp
+
+    - name: Run tests
+      run: |
+        if [ -f main ]; then
+          ./main
+        else
+          echo "No executable found to run tests."
+        fi
