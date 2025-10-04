@@ -1,0 +1,14 @@
+# Build artifacts
+build/
+*.o
+*.out
+biblioteca
+!src/biblioteca.cpp
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# Log files
+registro.txt
