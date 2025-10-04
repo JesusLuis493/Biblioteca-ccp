@@ -25,7 +25,7 @@ El sistema permite gestionar libros en una biblioteca a través de un menú inte
 
 1. **Compila el programa** (por ejemplo, usando g++):
     ```bash
-    g++ -o biblioteca biblioteca.cpp
+    g++ -o biblioteca src/biblioteca.cpp
     ```
 2. **Ejecuta el archivo generado**:
     ```bash
